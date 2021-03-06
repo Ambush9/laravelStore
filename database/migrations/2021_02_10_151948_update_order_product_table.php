@@ -13,7 +13,9 @@ class UpdateOrderProductTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('order_product', function (Blueprint $table) {
+            $table->integer('count')->default(1);
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ class UpdateOrderProductTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('order_product', function (Blueprint $table) {
+            $table->dropColumn('count');
+        });
     }
 }

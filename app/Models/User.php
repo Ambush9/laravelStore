@@ -40,4 +40,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // проверяет, является ли юзер админом
+    public function isAdmin() {
+        return $this->isAdmin === 1;
+    }
+
+    public function orders() {
+        return $this->hasMany(Order::class);
+    }
 }

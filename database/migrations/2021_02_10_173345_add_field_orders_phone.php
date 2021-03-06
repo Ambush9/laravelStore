@@ -13,7 +13,7 @@ class AddFieldOrdersPhone extends Migration
      */
     public function up()
     {
-        //
+        Schema::dropColumns('orders', ['integer']);
     }
 
     /**
@@ -23,6 +23,8 @@ class AddFieldOrdersPhone extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('phone');
+        });
     }
 }

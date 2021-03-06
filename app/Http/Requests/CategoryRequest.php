@@ -13,7 +13,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +23,24 @@ class CategoryRequest extends FormRequest
      */
     public function rules()
     {
+        $rules =  [
+            'code' => 'required|min:3|max:255|unique:categories,code',
+            'name' => 'required|min:3|max:255',
+            'description' => 'required|min:5',
+        ];
+
+        if ($this->route()->named('categories.update')) { // проверка имени маршрута
+            $rules['code'].= ',' . $this->route()->parameter('category')->id; // достаем из категории id и если это обновление то не будет проверяться уникальность если мы сохраняем то же самое
+        }
+
+        return $rules;
+    }
+
+    public function messages() {
         return [
-            //
+            'required' => 'Поле :attribute обязательно для ввода',
+            'min' => 'Поле :attribute должно иметь минимум :min символов',
+            'code.min' => 'Поле код должно содержать не менее :min символов', // для кастомного поля
         ];
     }
 }

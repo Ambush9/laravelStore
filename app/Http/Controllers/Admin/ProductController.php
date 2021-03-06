@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -15,7 +18,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::paginate(10);
+        return view('auth.products.index', compact('products'));
     }
 
     /**
@@ -25,7 +29,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::get();
+        return view('auth.products.form', compact('categories'));
     }
 
     /**
@@ -34,9 +39,18 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        //
+        $params = $request->all();
+
+        unset($params['image']);
+
+        if($request->has('image')) {
+            $params['image'] = $request->file('image')->store('products'); // file(название определяется по name инпута), store(название папки куда сохраняем)
+        }
+
+        Product::create($params);
+        return redirect()->route('products.index');
     }
 
     /**
@@ -47,7 +61,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return view('auth.products.show', compact('product'));
     }
 
     /**
@@ -58,7 +72,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        $categories = Category::get();
+        return view('auth.products.form', compact('product','categories'));
     }
 
     /**
@@ -68,9 +83,26 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        //
+        $params = $request->all();
+        unset($params['image']);
+
+        // Delete old image with facade Storage
+        if($request->has('image')) {
+            Storage::delete($product->image);
+            $path = $request->file('image')->store('categories'); // file(название определяется по name инпута), store(название папки куда сохраняем)
+            $params['image'] = $path;
+        }
+
+        foreach (['new', 'hit', 'recommend'] as $fieldName) {
+            if(!isset($params[$fieldName])) {
+                $params[$fieldName] = 0;
+            }
+        }
+
+        $product->update($params);
+        return redirect()->route('products.index');
     }
 
     /**
@@ -81,6 +113,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return redirect()->route('products.index');
     }
 }

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -15,7 +17,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::paginate(10);
+        return view('auth.categories.index', compact('categories'));
     }
 
     /**
@@ -25,7 +28,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('auth.categories.form');
     }
 
     /**
@@ -34,9 +37,18 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $params = $request->all();
+        unset($params['image']);
+
+        // if image uploaded
+        if ($request->has('image')) {
+            $path = $request->file('image')->store('categories'); // file(название определяется по name инпута), store(название папки куда сохраняем)
+            $params['image'] = $path;
+        }
+        Category::create($params);
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -47,7 +59,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return view('auth.categories.show', compact('category'));
     }
 
     /**
@@ -58,7 +70,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        return view('auth.categories.form', compact('category'));
     }
 
     /**
@@ -68,9 +80,21 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, Category $category)
     {
-        //
+        $params = $request->all();
+        unset($params['image']);
+
+        // Delete old image with facade Storage
+        if($request->has('image')) {
+            Storage::delete($category->image);
+            $path = $request->file('image')->store('categories'); // file(название определяется по name инпута), store(название папки куда сохраняем)
+            $params['image'] = $path;
+        }
+
+
+        $category->update($params);
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -81,6 +105,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return redirect()->route('categories.index');
     }
 }

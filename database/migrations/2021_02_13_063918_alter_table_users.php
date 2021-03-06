@@ -13,7 +13,9 @@ class AlterTableUsers extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            $table->tinyInteger('isAdmin')->default(0);
+        });
     }
 
     /**
@@ -23,6 +25,8 @@ class AlterTableUsers extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('isAdmin');
+        });
     }
 }
