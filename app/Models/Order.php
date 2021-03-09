@@ -19,13 +19,29 @@ class Order extends Model
 //        return $this->belongsTo(User::class);
 //    }
 
-    // $this - там лежат все товары
-    public function getFullPrice() {
+    public function calculateFullSum()
+    {
         $sum = 0;
         foreach ($this->products as $product) {
             $sum+= $product->getPriceForCount();
         }
         return $sum;
+    }
+
+    public static function eraseOrderSum()
+    {
+        session()->forget('full_order_sum');
+    }
+
+    // $this - там лежат все товары
+    public static function getFullSum() {
+        return session('full_order_sum', 0);
+    }
+
+    public static function changeFullSum($changeSum)
+    {
+        $sum = self::getFullSum() + $changeSum;
+        session(['full_order_sum' => $sum]);
     }
 
     public function scopeActive($query)
