@@ -17,7 +17,7 @@ class OrderController extends Controller
     public function index()
     {
         // получаем заказы для конкретого пользователя
-        $orders = Auth::user()->orders()->where('status', 1)->paginate(10);
+        $orders = Auth::user()->orders()->active()->paginate(10);
         return view('auth.orders.index', compact('orders'));
     }
 

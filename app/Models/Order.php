@@ -28,6 +28,11 @@ class Order extends Model
         return $sum;
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
+
     // сохраняет заказ
     public function saveOrder($name, $phone)
     {

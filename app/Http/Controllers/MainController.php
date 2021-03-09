@@ -25,10 +25,9 @@ class MainController extends Controller
 
         foreach (['hit', 'new', 'recommend'] as $field) {
             if ($request->has($field)) {
-                $productsQuery->where($field, 1);
+                $productsQuery->$field();
             }
         }
-
 
         $products = $productsQuery->paginate(6)->withPath("?" . $request->getQueryString());
         return view('index', compact('products'));
