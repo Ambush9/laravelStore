@@ -3,15 +3,16 @@
 @section('title', 'Товар')
 
 @section('content')
-        <h1>iPhone X 64GB</h1>
-        <h2>{{ $product }}</h2>
+        <h1>{{ $product->name }}</h1>
+        <h2>{{ $product->category->name }}</h2>
         <h2>Мобильные телефоны</h2>
-        <p>Price: <b>71990 ₽</b></p>
-        <img src="http://internet-shop.tmweb.ru/storage/products/iphone_x.jpg">
-        <p>Отличный продвинутый телефон с памятью на 64 gb</p>
+        <p>Price: <b>{{ $product->price }} ₽</b></p>
+        <img src="{{ Storage::url($product->image) }}">
+        <p>{{ $product->description }}</p>
 
-        <form action="http://internet-shop.tmweb.ru/basket/add/1" method="POST">
-            <button type="submit" class="btn btn-success" role="button">Add to Cart</button>
-
-            <input type="hidden" name="_token" value="pDT6yzVhqXz7JwAlr8QWq5BXSfa6vLGBekyyd8s9">        </form>
+        @if($product->isAvailable())
+            <a class="btn btn-success" href="{{ route('basket-add', $product) }}">Добавить в корзину</a>
+        @else
+            Не доступен
+        @endif
 @endsection
