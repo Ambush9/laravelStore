@@ -63,7 +63,7 @@ class Product extends Model
 
     public function isAvailable()
     {
-        return $this->trashed() && $this->count > 0;
+        return !$this->trashed() && $this->count > 0;
     }
 
     public function isHit()

@@ -9,6 +9,8 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id'];
+
     // связь один-ко-многим, использует таблицу order_product
     public function products()
     {

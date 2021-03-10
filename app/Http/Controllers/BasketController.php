@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\Basket;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -9,59 +10,51 @@ use Illuminate\Support\Facades\Auth;
 
 class BasketController extends Controller
 {
-    public function basket () {
-        $orderId = session('orderId');
-        if (!is_null($orderId)) {
-            $order = Order::findOrFail($orderId);
-        }
+    public function basket()
+    {
+        $order = (new Basket())->getOrder();
 
         return view('basket', compact('order'));
     }
 
-    public function basketPlace () {
-        $orderId = session('orderId');
-        if (is_null($orderId)) {
-            return redirect()->route('index');
+    public function basketConfirm(Request $request)
+    {
+        // сохраняем заказ
+
+        $status = (new Basket())->saveOrder($request->name, $request->phone);
+
+        if ($status) {
+            session()->flash('success', 'Ваш заказ принят в обработку!');
+        } else {
+            session()->flash('warning', 'Товар недоступен для заказа в полном объеме');
         }
-        $order = Order::find($orderId);
+
+        Order::eraseOrderSum();
+
+        return redirect()->route('index');
+    }
+
+    public function basketPlace()
+    {
+        $basket = (new Basket());
+        $order = $basket->getOrder();
+        if(!$basket->countAvailable()) {
+            session()->flash('warning', 'Товар недоступен для заказа в полном объеме');
+            return redirect()->route('basket');
+        }
+
         return view('order', compact('order'));
     }
 
-    public function basketAdd ($productId)
+    public function basketAdd($productId)
     {
-        // смотрим есть ли в сессии нужный ключ
-        $orderId = session('orderId');
-        // если нет, то создаем и кладем в сессию
-        if (is_null($orderId)) {
-            $order = Order::create();
-            session(['orderId' => $order->id]);
+        $result = (new Basket(true))->addProduct($productId);
+
+        if($result) {
+            session()->flash('success', 'Товар добавлен в корзину');
         } else {
-            $order = Order::find($orderId);
+            session()->flash('warning', 'Товар недоступен в большем кол-ве для заказа');
         }
-
-        // проверка что товар уже есть в корзине
-        if($order->products->contains($productId)) {
-            // получаем связанную запись
-            $pivotRow = $order->products()->where('product_id', $productId)->first()->pivot;
-
-            // если такой товар уже есть в корзине, то увеличиваем кол-во
-            $pivotRow->count++;
-            $pivotRow->update();
-        } else {
-            // это использование связи(по имени функции связи в модели)
-            $order->products()->attach($productId);
-        }
-
-        // если юзер авторизован, сохраняем в БД
-        if(Auth::check()) {
-            $order->user_id = Auth::id();
-            $order->save();
-        }
-
-        $product = Product::find($productId);
-        Order::changeFullSum($product->price);
-
-        session()->flash('success', 'Добавлен товар' . $product->name);
 
         // т.о при перезагрузке страницы не дублируются записи в корзине
         return redirect()->route('basket');
@@ -69,48 +62,10 @@ class BasketController extends Controller
 
     public function basketRemove($productId)
     {
-        $orderId = session('orderId');
-        if (is_null($orderId)) {
-            return redirect()->route('basket');
-        }
+        (new Basket())->removeProduct($productId);
 
-        $order = Order::find($orderId);
-        if($order->products->contains($productId)) {
-            // получаем связанную запись
-            $pivotRow = $order->products()->where('product_id', $productId)->first()->pivot;
-            if($pivotRow->count < 2) {
-                // если товар есть и он один в коллекции текущей корзины, то удаляем товар из таблицы связей
-                $order->products()->detach($productId);
-            } else {
-                $pivotRow->count--;
-                $pivotRow->update();
-            }
-        }
-
-        $product = Product::find($productId);
-        Order::changeFullSum(-$product->price);
+        session()->flash('warning', 'Товар удален');
 
         return redirect()->route('basket');
-    }
-
-    public function basketConfirm(Request $request) {
-        $orderId = session('orderId');
-        if (is_null($orderId)) {
-            return redirect()->route('index');
-        }
-
-        $order = Order::find($orderId);
-        // сохраняем заказ
-        $success = $order->saveOrder($request->name, $request->phone);
-
-        if ($success) {
-            session()->flash('success', 'Ваш заказ принят в обработку!');
-        } else {
-            session()->flash('warning', 'Случилась ошибка!');
-        }
-
-        Order::eraseOrderSum();
-
-        return redirect()->route('index');
     }
 }

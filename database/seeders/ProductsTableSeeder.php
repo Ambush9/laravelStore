@@ -21,6 +21,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Отличный продвинутый телефон с памятью на 64 gb',
                 'price' => '71990',
                 'category_id' => 1,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'iPhone X 256GB',
@@ -28,6 +29,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Отличный продвинутый телефон с памятью на 256 gb',
                 'price' => '89990',
                 'category_id' => 1,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'HTC One S',
@@ -35,6 +37,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Зачем платить за лишнее? Легендарный HTC One S',
                 'price' => '12490',
                 'category_id' => 1,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'iPhone 5SE',
@@ -42,6 +45,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Отличный классический iPhone',
                 'price' => '17221',
                 'category_id' => 1,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'Наушники Beats Audio',
@@ -49,6 +53,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Отличный классический iPhone',
                 'price' => '20221',
                 'category_id' => 2,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'Камера GoPro',
@@ -56,6 +61,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Снимай самые яркие моменты с помощью этой камеры',
                 'price' => '12000',
                 'category_id' => 2,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'Камера Panasonic HC-V770',
@@ -63,6 +69,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Для серьёзной видео съемки нужна серьёзная камера. Panasonic HC-V770 для этих целей лучший выбор!',
                 'price' => '27900',
                 'category_id' => 2,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'Кофемашина DeLongi',
@@ -70,6 +77,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Хорошее утро начинается с хорошего кофе!',
                 'price' => '40200',
                 'category_id' => 3,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'Холодильник Haier',
@@ -77,6 +85,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Для большой семьи большой холодильник!',
                 'price' => '40200',
                 'category_id' => 3,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'Блендер Moulinex',
@@ -84,6 +93,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Для самых смелых идей',
                 'price' => '4200',
                 'category_id' => 3,
+                'count' => rand(0,10),
             ],
             [
                 'name' => 'Мясорубка Bosch',
@@ -91,6 +101,7 @@ class ProductsTableSeeder extends Seeder
                 'description' => 'Любите домашние котлеты? Вам определенно стоит посмотреть на эту мясорубку!',
                 'price' => '9200',
                 'category_id' => 3,
+                'count' => rand(0,10),
             ],
         ]);
     }
