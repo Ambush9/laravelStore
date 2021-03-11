@@ -2,9 +2,11 @@
 
 namespace App\Classes;
 
+use App\Mail\OrderCreated;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class Basket
 {
@@ -39,20 +41,33 @@ class Basket
         return $this->order;
     }
 
-    public function countAvailable() {
+    public function countAvailable($updateCount =  false) {
         foreach ($this->order->products as $orderProduct) {
-            if ($orderProduct->count < $this->getPivotRow($orderProduct->id)->count ) {
+            if ($orderProduct->count < $this->getPivotRow($orderProduct->id)->count) {
                 return false;
             }
+            if ($updateCount) {
+                $orderProduct->count -= $this->getPivotRow($orderProduct->id)->count;
+            }
+
         }
+
+        // обновляет доступность товара если его не осталось после заказа
+        if ($updateCount) {
+            $this->order->products->map->save(); // свойство map работает как обычная функция map
+        }
+
         return true;
     }
 
-    public function saveOrder($name, $phone)
+    public function saveOrder($name, $phone, $email)
     {
         if(!$this->countAvailable()) {
             return false;
         }
+
+        Mail::to($email)->send(new OrderCreated($name, $this->order));
+
         return $this->order->saveOrder($name, $phone);
     }
 
