@@ -55,7 +55,7 @@ Route::middleware(['auth'])->group(function() {
 
 
 Route::get('/categories', [MainController::class, 'categories'])->name('categories');
-
+Route::post('subscription/{product}', [MainController::class, 'subscribe'])->name('subscription');
 
 //Route::get('/home', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('home');
 
