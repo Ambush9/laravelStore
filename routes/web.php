@@ -26,6 +26,7 @@ Auth::routes([
 ]);
 
 Route::get('/reset', [ResetController::class, 'reset'])->name('reset');
+Route::get('/currency/{currencyCode}', [MainController::class, 'changeCurrency'])->name('currency');
 
 Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('get-logout');
 

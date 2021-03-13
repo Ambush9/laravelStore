@@ -18,7 +18,7 @@
         <img src="{{ Storage::url($product->image) }}" alt="iPhone X 64GB">
         <div class="caption">
             <h3>{{ $product->name }}</h3>
-            <p>{{ $product->price }} ₽</p>
+            <p>{{ $product->price }} {{ App\Services\CurrencyConversion::getCurrencySymbol() }}</p>
             <p>
             <form action="{{ route('basket-add', $product) }}" method="POST">
                 @if($product->isAvailable())

@@ -8,6 +8,8 @@
     <title>Интернет Магазин: @yield('title')</title>
 
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/starter-template.css" rel="stylesheet">
@@ -25,6 +27,15 @@
                 <li @routeactive('categor*')><a href="{{ route('categories') }}">Категории</a></li>
                 <li @routeactive('basket*') ><a href="{{ route('basket') }}">В корзину</a></li>
                 <li><a href="{{ route('reset') }}">Сбросить проект в начальное состояние</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ App\Services\CurrencyConversion::getCurrencySymbol() }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        @foreach (App\Models\Currency::get() as $currency)
+                            <li><a href="{{ route('currency', $currency->code) }}">{{ $currency->symbol }}</a></li>
+                        @endforeach
+                    </ul>
+                </li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
